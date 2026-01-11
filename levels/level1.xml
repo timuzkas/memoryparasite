@@ -1,0 +1,16 @@
+<level name="Level 1" tutorial="bang your head on the platforms">
+    <!-- Floor -->
+    <platform x="0" y="670" w="1280" h="50" />
+    
+    <!-- Stable platforms -->
+    <platform x="200" y="550" w="200" h="30" />
+    <platform x="500" y="450" w="200" h="30" />
+    
+    <!-- Unstable platforms (need corruption < 60%) -->
+    <platform x="800" y="350" w="150" h="25" memory_req="0.6" />
+    <platform x="1000" y="250" w="150" h="25" memory_req="0.4" />
+    
+    <!-- Door -->
+    <platform x="1100" y="150" w="100" h="20" memory_req="0.2" />
+    <door x="1120" y="60" target="level2" />
+</level>

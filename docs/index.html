@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygu Engine Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #35424a;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        nav {
+            background: #e8491d;
+            padding: 0.5rem;
+            position: sticky;
+            top: 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            margin: 0;
+        }
+        nav ul li {
+            margin: 0;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+        }
+        nav ul li a:hover {
+            background: #35424a;
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        section {
+            background: #fff;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #e8491d;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+        footer {
+            background: #35424a;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pygu Engine Documentation</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#engine-initialization">Engine Initialization</a></li>
+            <li><a href="#components">Components</a></li>
+            <li><a href="#sprites">Sprites</a></li>
+            <li><a href="#animated-sprites">Animated Sprites</a></li>
+            <li><a href="#physics">Physics</a></li>
+            <li><a href="#collision-detection">Collision Detection</a></li>
+            <li><a href="#particle-system">Particle System</a></li>
+            <li><a href="#post-processing-effects">Post-Processing Effects</a></li>
+            <li><a href="#asset-management">Asset Management</a></li>
+            <li><a href="#file-management">File Management</a></li>
+            <li><a href="#sound-management">Sound Management</a></li>
+            <li><a href="#animation">Animation</a></li>
+            <li><a href="#shaders">Shaders</a></li>
+            <li><a href="#game-loop">Game Loop</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Pygu is a lightweight 2D game engine built with Python, Skia for 2D rendering, and ModernGL for GPU-accelerated post-processing effects. It is designed for rapid prototyping and small to medium-sized games.</p>
+        </section>
+
+        <section id="engine-initialization">
+            <h2>Engine Initialization</h2>
+            <p>The <code>CoreEngine</code> class is the main entry point for the engine. It handles window creation, input management, and the game loop.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(width, height, title)</strong>: Initializes the engine with the specified width, height, and title.</li>
+                <li><strong>_init_fonts()</strong>: Initializes the fonts for the engine.</li>
+                <li><strong>_setup_callbacks()</strong>: Sets up the callbacks for input events.</li>
+                <li><strong>_on_resize(window, width, height)</strong>: Handles window resize events.</li>
+                <li><strong>_init_skia_cpu(w, h)</strong>: Initializes the Skia CPU surface.</li>
+                <li><strong>_init_blit_pipeline()</strong>: Initializes the blit pipeline for rendering.</li>
+                <li><strong>_update_vao(shader_name)</strong>: Updates the vertex array object for the specified shader.</li>
+                <li><strong>set_active_shader(name)</strong>: Sets the active shader for rendering.</li>
+                <li><strong>_upload_skia_to_texture()</strong>: Uploads the Skia surface to a texture.</li>
+                <li><strong>_render_fps(canvas)</strong>: Renders the FPS counter on the canvas.</li>
+                <li><strong>add_component(comp)</strong>: Adds a component to the engine.</li>
+                <li><strong>_on_key(w, k, s, a, m)</strong>: Handles key press and release events.</li>
+                <li><strong>_on_mouse_button(w, b, a, m)</strong>: Handles mouse button press and release events.</li>
+                <li><strong>_on_mouse_move(w, x, y)</strong>: Handles mouse move events.</li>
+                <li><strong>_dispatch_event(event)</strong>: Dispatches an event to the components.</li>
+                <li><strong>run_heartbeat()</strong>: Logs engine health information every 5 seconds.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.engine import CoreEngine
+
+# Initialize the engine with a window size of 1280x720
+engine = CoreEngine(width=1280, height=720, title="My Game")
+</code></pre>
+        </section>
+
+        <section id="components">
+            <h2>Components</h2>
+            <p>Components are modular units of functionality that can be added to the engine. They handle initialization, event processing, updates, and rendering.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(name)</strong>: Initializes the component with the specified name.</li>
+                <li><strong>on_init(ctx, canvas)</strong>: Called when the component is added to the engine.</li>
+                <li><strong>on_event(event)</strong>: Handles input events. Returns True to consume the event.</li>
+                <li><strong>on_update(dt)</strong>: Logic/Simulation update.</li>
+                <li><strong>on_render_gl(ctx)</strong>: ModernGL 3D/Simulation rendering.</li>
+                <li><strong>on_render_ui(canvas)</strong>: Skia 2D/UI rendering.</li>
+                <li><strong>on_destroy()</strong>: Called when the component is removed.</li>
+                <li><strong>contains_point(x, y)</strong>: Checks if a point is within the component bounds.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.component import Component
+
+class MyComponent(Component):
+    def __init__(self):
+        super().__init__("MyComponent")
+    
+    def on_init(self, ctx, canvas):
+        print("Component initialized")
+    
+    def on_update(self, dt):
+        print(f"Update called with delta time: {dt}")
+    
+    def on_render_ui(self, canvas):
+        # Render logic here
+        pass
+
+# Add the component to the engine
+engine.add_component(MyComponent())
+</code></pre>
+        </section>
+
+        <section id="sprites">
+            <h2>Sprites</h2>
+            <p>The <code>Sprite</code> class allows for rendering images with various transformations such as scaling, rotation, and flipping.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(image, src_rect)</strong>: Initializes the sprite with the specified image and source rectangle.</li>
+                <li><strong>render(canvas, pos)</strong>: Renders the sprite on the canvas at the specified position.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.sprite import Sprite, Rect
+import skia
+
+# Load an image
+image = skia.Image.MakeFromEncoded(skia.Data.MakeFromFileName("path/to/image.png"))
+
+# Create a sprite
+sprite = Sprite(image, src_rect=Rect(x=0, y=0, w=32, h=32))
+sprite.scale = Vec2(2.0, 2.0)
+sprite.rotation = 0.5  # Radians
+
+# Render the sprite
+sprite.render(canvas, Vec2(100, 100))
+</code></pre>
+        </section>
+
+        <section id="animated-sprites">
+            <h2>Animated Sprites</h2>
+            <p>The <code>AnimatedSprite</code> class extends the <code>Sprite</code> class to support animations.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(image, frame_width, frame_height, frame_duration)</strong>: Initializes the animated sprite with the specified image, frame width, frame height, and frame duration.</li>
+                <li><strong>add_animation(name, frames)</strong>: Adds an animation with the specified name and frames.</li>
+                <li><strong>play(name, loop)</strong>: Plays the animation with the specified name and loop setting.</li>
+                <li><strong>update(dt)</strong>: Updates the animation with the specified delta time.</li>
+                <li><strong>_update_src_rect()</strong>: Updates the source rectangle for the current frame.</li>
+                <li><strong>_update_src_rect_by_index(idx)</strong>: Updates the source rectangle for the specified frame index.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.sprite import AnimatedSprite
+
+# Create an animated sprite
+animated_sprite = AnimatedSprite(image, frame_width=32, frame_height=32, frame_duration=0.1)
+
+# Add an animation
+animated_sprite.add_animation("walk", [0, 1, 2, 3])
+
+# Play the animation
+animated_sprite.play("walk", loop=True)
+
+# Update and render the sprite
+animated_sprite.update(dt)
+animated_sprite.render(canvas, Vec2(100, 100))
+</code></pre>
+        </section>
+
+        <section id="physics">
+            <h2>Physics</h2>
+            <p>The <code>PhysicsWorld</code> class manages rigid bodies and their interactions.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(gravity)</strong>: Initializes the physics world with the specified gravity.</li>
+                <li><strong>add_body(body)</strong>: Adds a rigid body to the physics world.</li>
+                <li><strong>remove_body(body)</strong>: Removes a rigid body from the physics world.</li>
+                <li><strong>update(dt)</strong>: Updates the physics world with the specified delta time.</li>
+                <li><strong>constrain_to_bounds(body, radius, min_x, min_y, max_x, max_y)</strong>: Constrains a rigid body to the specified bounds.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.physics import PhysicsWorld, RigidBody, Vec2
+
+# Create a physics world
+world = PhysicsWorld(gravity=Vec2(0, 9.8))
+
+# Create a rigid body
+body = RigidBody(position=Vec2(100, 100), velocity=Vec2(0, 0), mass=1.0)
+
+# Add the body to the world
+world.add_body(body)
+
+# Update the physics world
+world.update(dt)
+</code></pre>
+        </section>
+
+        <section id="collision-detection">
+            <h2>Collision Detection</h2>
+            <p>The <code>CollisionWorld</code> class handles collision detection between circles and rectangles.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__()</strong>: Initializes the collision world.</li>
+                <li><strong>add_circle(body, radius)</strong>: Adds a circle collider to the collision world.</li>
+                <li><strong>add_rect(body, width, height)</strong>: Adds a rectangle collider to the collision world.</li>
+                <li><strong>check_and_resolve()</strong>: Checks and resolves collisions in the collision world.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.collision import CollisionWorld
+from engine.physics import RigidBody, Vec2
+
+# Create a collision world
+collision_world = CollisionWorld()
+
+# Create rigid bodies
+body1 = RigidBody(position=Vec2(100, 100))
+body2 = RigidBody(position=Vec2(150, 150))
+
+# Add bodies to the collision world
+collision_world.add_circle(body1, radius=20)
+collision_world.add_circle(body2, radius=20)
+
+# Check and resolve collisions
+collision_world.check_and_resolve()
+</code></pre>
+        </section>
+
+        <section id="particle-system">
+            <h2>Particle System</h2>
+            <p>The <code>ParticleSystem</code> class allows for creating and managing particle effects.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__()</strong>: Initializes the particle system.</li>
+                <li><strong>emit(pos, count, color, speed_range, life_range, size_range, gravity)</strong>: Emits particles with the specified parameters.</li>
+                <li><strong>append_manual(pos, vel, life, color, size, gravity)</strong>: Appends a manual particle with the specified parameters.</li>
+                <li><strong>update(dt)</strong>: Updates the particle system with the specified delta time.</li>
+                <li><strong>render(canvas)</strong>: Renders the particles on the canvas.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.particles import ParticleSystem
+from engine.physics import Vec2
+
+# Create a particle system
+particle_system = ParticleSystem()
+
+# Emit particles
+particle_system.emit(Vec2(100, 100), count=10, color=skia.ColorRED, speed_range=(50, 200), life_range=(0.3, 0.8), size_range=(2, 6))
+
+# Update and render particles
+particle_system.update(dt)
+particle_system.render(canvas)
+</code></pre>
+        </section>
+
+        <section id="post-processing-effects">
+            <h2>Post-Processing Effects</h2>
+            <p>The <code>PostProcessSystem</code> class manages post-processing effects such as screen shake and glitch effects.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__(engine)</strong>: Initializes the post-processing system with the specified engine.</li>
+                <li><strong>update(dt)</strong>: Updates the post-processing system with the specified delta time.</li>
+                <li><strong>trigger_shake(amount)</strong>: Triggers a screen shake effect with the specified amount.</li>
+                <li><strong>trigger_glitch(amount)</strong>: Triggers a glitch effect with the specified amount.</li>
+                <li><strong>set_effect(effect_name)</strong>: Sets the active effect with the specified name.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.effects import PostProcessSystem
+
+# Create a post-processing system
+post_process = PostProcessSystem(engine)
+
+# Trigger effects
+post_process.trigger_shake(5.0)
+post_process.trigger_glitch(1.0)
+
+# Update the post-processing system
+post_process.update(dt)
+</code></pre>
+        </section>
+
+        <section id="asset-management">
+            <h2>Asset Management</h2>
+            <p>The <code>AssetManager</code> class handles loading and managing assets such as images, spritesheets, sounds, and fonts.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>get()</strong>: Gets the singleton instance of the asset manager.</li>
+                <li><strong>load_image(path, key)</strong>: Loads an image with the specified path and key.</li>
+                <li><strong>get_image(key)</strong>: Gets the image with the specified key.</li>
+                <li><strong>load_spritesheet(path, frame_w, frame_h, key)</strong>: Loads a spritesheet with the specified path, frame width, frame height, and key.</li>
+                <li><strong>load_sound(path, key)</strong>: Loads a sound with the specified path and key.</li>
+                <li><strong>play_sound(key, volume)</strong>: Plays the sound with the specified key and volume.</li>
+                <li><strong>get_font(name, size)</strong>: Gets the font with the specified name and size.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.assets import AssetManager
+
+# Get the asset manager instance
+asset_manager = AssetManager.get()
+
+# Load an image
+image = asset_manager.load_image("path/to/image.png", "my_image")
+
+# Load a spritesheet
+spritesheet = asset_manager.load_spritesheet("path/to/spritesheet.png", frame_w=32, frame_h=32, key="my_spritesheet")
+
+# Load a sound
+asset_manager.load_sound("path/to/sound.wav", "my_sound")
+
+# Play a sound
+asset_manager.play_sound("my_sound", volume=1.0)
+</code></pre>
+        </section>
+
+        <section id="file-management">
+            <h2>File Management</h2>
+            <p>The <code>FileManager</code> class handles loading files such as JSON, XML, and images.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>get()</strong>: Gets the singleton instance of the file manager.</li>
+                <li><strong>load_json(path)</strong>: Loads a JSON file with the specified path.</li>
+                <li><strong>load_xml(path)</strong>: Loads an XML file with the specified path.</li>
+                <li><strong>load_image(path)</strong>: Loads an image with the specified path.</li>
+                <li><strong>load_spritesheet(path, frame_w, frame_h)</strong>: Loads a spritesheet with the specified path, frame width, and frame height.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.file import FileManager
+
+# Get the file manager instance
+file_manager = FileManager.get()
+
+# Load a JSON file
+data = file_manager.load_json("path/to/data.json")
+
+# Load an XML file
+root = file_manager.load_xml("path/to/data.xml")
+
+# Load an image
+image = file_manager.load_image("path/to/image.png")
+</code></pre>
+        </section>
+
+        <section id="sound-management">
+            <h2>Sound Management</h2>
+            <p>The <code>SoundManager</code> class handles loading and playing sounds.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>get()</strong>: Gets the singleton instance of the sound manager.</li>
+                <li><strong>load(path, name)</strong>: Loads a sound with the specified path and name.</li>
+                <li><strong>play(name, volume, pitch)</strong>: Plays the sound with the specified name, volume, and pitch.</li>
+                <li><strong>set_global_volume(v)</strong>: Sets the global volume for all sounds.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.sound import SoundManager
+
+# Get the sound manager instance
+sound_manager = SoundManager.get()
+
+# Load a sound
+sound_manager.load("path/to/sound.wav", "my_sound")
+
+# Play a sound
+sound_manager.play("my_sound", volume=1.0)
+</code></pre>
+        </section>
+
+        <section id="animation">
+            <h2>Animation</h2>
+            <p>The <code>Animator</code> class handles tweening and animations.</p>
+            <h3>Methods</h3>
+            <ul>
+                <li><strong>__init__()</strong>: Initializes the animator.</li>
+                <li><strong>to(name, start, end, duration, curve, on_complete)</strong>: Creates a named tween from the start value to the end value over the specified duration with the specified curve and completion callback.</li>
+                <li><strong>update(dt)</strong>: Updates the animator with the specified delta time.</li>
+                <li><strong>get_tween(name)</strong>: Retrieves a tween by its name.</li>
+                <li><strong>remove_tween(name)</strong>: Removes a tween by its name.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.animation import Animator, AnimationCurve
+
+# Create an animator
+animator = Animator()
+
+# Create a named tween
+animator.to("move_right", start=0.0, end=1.0, duration=1.0, curve=AnimationCurve.EASE_IN_OUT)
+
+# Retrieve a tween by name
+tween = animator.get_tween("move_right")
+
+# Remove a tween by name
+animator.remove_tween("move_right")
+
+# Update the animator
+animator.update(dt)
+</code></pre>
+        </section>
+
+        <section id="shaders">
+            <h2>Shaders</h2>
+            <p>The engine includes several built-in shaders for post-processing effects.</p>
+            <h3>Shaders</h3>
+            <ul>
+                <li><strong>DEFAULT_VERT</strong>: The default vertex shader.</li>
+                <li><strong>DEFAULT_FRAG</strong>: The default fragment shader.</li>
+                <li><strong>GLITCH_FRAG</strong>: A glitch effect fragment shader.</li>
+                <li><strong>CRT_FRAG</strong>: A CRT effect fragment shader.</li>
+                <li><strong>VHS_FRAG</strong>: A VHS effect fragment shader.</li>
+            </ul>
+            <h3>Example</h3>
+            <pre><code>from engine.shaders import DEFAULT_VERT, DEFAULT_FRAG, GLITCH_FRAG, CRT_FRAG, VHS_FRAG
+
+# Use a shader in the engine
+engine.set_active_shader("glitch")
+</code></pre>
+        </section>
+
+        <section id="game-loop">
+            <h2>Game Loop</h2>
+            <p>The main game loop is managed by the <code>CoreEngine</code> class. It handles input, updates, and rendering.</p>
+            <h3>Example</h3>
+            <pre><code>import glfw
+import time
+
+# Main game loop
+last_time = time.time()
+while not glfw.window_should_close(engine.window):
+    # Calculate delta time
+    current_time = time.time()
+    dt = current_time - last_time
+    last_time = current_time
+
+    # Update
+    engine.update(dt)
+
+    # Render
+    engine.render()
+
+    # Swap buffers and poll events
+    glfw.swap_buffers(engine.window)
+    glfw.poll_events()
+</code></pre>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Pygu Engine Documentation</p>
+    </footer>
+</body>
+</html>

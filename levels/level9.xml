@@ -1,0 +1,29 @@
+<level name="Level 9" tutorial="Prepare for the boss...">
+    <!-- Floor -->
+    <platform x="0" y="670" w="1280" h="50" permanent="true" />
+
+    <!-- Platforms with fruits -->
+    <platform x="300" y="500" w="150" h="20" />
+    <item x="360" y="460" type="fruit" frame="0" />
+
+    <platform x="800" y="500" w="150" h="20" />
+    <item x="860" y="460" type="fruit" frame="0" />
+
+    <platform x="550" y="300" w="150" h="20" />
+    <item x="610" y="260" type="fruit" frame="0" />
+
+    <!-- Dialog triggers -->
+    <dialog
+        trigger_x="100"
+    >It's pretty rare for anyone to survive him...</dialog>
+    <dialog
+        trigger_x="400"
+    >He's a broken entity, a parasite of the system.</dialog>
+    <dialog trigger_x="700">Dash through him to damage his core.</dialog>
+    <dialog
+        trigger_x="1000"
+    >Use fruits (Key 1) to freeze his rage when he gets too aggressive.</dialog>
+
+    <!-- Door to Level 10 -->
+    <door x="1100" y="580" target="level10" />
+</level>

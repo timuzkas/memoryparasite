@@ -1,0 +1,15 @@
+<level name="Stabilization" tutorial="The system is restored. Congratulations.">
+    <platform x="0" y="670" w="1280" h="50" permanent="true" />
+
+    <!-- Many fruits on the floor -->
+    <item x="100" y="630" type="fruit" frame="0" />
+    <item x="150" y="630" type="fruit" frame="1" />
+    <item x="200" y="630" type="fruit" frame="2" />
+    <item x="250" y="630" type="fruit" frame="3" />
+    <item x="300" y="630" type="fruit" frame="0" />
+    <item x="350" y="630" type="fruit" frame="1" />
+        <item x="900" y="630" type="fruit" frame="0" />
+        
+        <dialog trigger_x="400">Thanks for playing! @timuzkas</dialog>
+        
+        <door x="1100" y="580" target="EXIT" /></level>

@@ -1,0 +1,20 @@
+<level name="Level 4" tutorial="avoid the sparks and jump across the void">
+    <!-- Floor at start and end -->
+    <platform x="0" y="670" w="250" h="50" permanent="true" />
+    <platform x="1030" y="670" w="250" h="50" permanent="true" />
+    
+    <!-- Corrupted Cables -->
+    <cable x="450" y="0" len="320" />
+    <cable x="640" y="0" len="220" />
+    <cable x="830" y="0" len="380" />
+
+    <!-- Glitchy Middle Platform - Now smaller and further away -->
+    <platform x="490" y="480" w="300" h="30" glitch_type="chaos" />
+    
+    <!-- Some high ledges - Further apart -->
+    <platform x="120" y="380" w="80" h="20" />
+    <platform x="1080" y="380" w="80" h="20" />
+
+    <!-- Door to Level 5 -->
+    <door x="1150" y="580" target="level5" />
+</level>

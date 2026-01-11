@@ -1,0 +1,29 @@
+<level name="Level 5" tutorial="collect 3 fragments to bypass the firewall">
+    <!-- Fragment 1 Area: Normal/Permanent -->
+    <platform x="0" y="670" w="200" h="50" permanent="true" />
+    <platform x="220" y="550" w="100" h="20" />
+    <item x="250" y="500" type="fragment" rotation="0" /> <!-- Fragment 1 -->
+
+    <!-- One Fruit to replenish -->
+    <item x="50" y="600" type="fruit" frame="0" />
+
+    <!-- Transition: Neural Pulse Gap -->
+    <platform x="350" y="450" w="80" h="20" hidden="true" />
+    <platform x="450" y="350" w="80" h="20" hidden="true" />
+    
+    <!-- Fragment 2 Area: High Memory ONLY (memory_min="0.8") -->
+    <platform x="550" y="250" w="150" h="20" memory_min="0.8" />
+    <item x="600" y="200" type="fragment" rotation="120" /> <!-- Fragment 2 -->
+    
+    <!-- Drain Area: Cables to lower memory -->
+    <cable x="750" y="0" len="400" />
+    <cable x="850" y="0" len="350" />
+    
+    <!-- Fragment 3 Area: Low Memory ONLY (memory_req="0.3") -->
+    <platform x="750" y="500" w="200" h="20" memory_req="0.3" />
+    <item x="850" y="450" type="fragment" rotation="240" /> <!-- Fragment 3 -->
+
+    <!-- Final Exit -->
+    <platform x="1000" y="670" w="280" h="50" permanent="true" />
+    <door x="1150" y="580" target="level6" locked="true" />
+</level>

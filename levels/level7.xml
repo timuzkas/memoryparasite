@@ -1,0 +1,41 @@
+<level
+    name="Level 7"
+    tutorial="platforms blink faster at high memory. Stay balanced."
+>
+    <!-- Floor -->
+    <platform x="0" y="670" w="200" h="50" permanent="true" />
+
+    <!-- Blinking platforms: frequency 5.0 -->
+    <!-- At 100% mem, freq = 5 * 2.2 = 11.0 (very fast) -->
+    <!-- At 40% mem, freq = 5 * 1.0 = 5.0 (manageable) -->
+    <platform x="250" y="550" w="120" h="20" blink_freq="5.0" />
+    <platform x="450" y="450" w="120" h="20" blink_freq="5.0" />
+    <platform x="650" y="350" w="120" h="20" blink_freq="5.0" />
+
+    <!-- Fragment 1 -->
+    <item x="680" y="300" type="fragment" rotation="0" />
+
+    <!-- Higher path -->
+    <platform x="850" y="250" w="120" h="20" blink_freq="6.0" />
+    <platform x="650" y="150" w="120" h="20" blink_freq="6.0" />
+
+    <!-- Fragment 2 -->
+    <item x="680" y="100" type="fragment" rotation="120" />
+
+    <!-- Final stretch -->
+    <platform x="450" y="150" w="120" h="20" blink_freq="7.0" />
+    <platform x="250" y="150" w="120" h="20" blink_freq="7.0" />
+
+    <!-- Fragment 3 -->
+    <item x="280" y="100" type="fragment" rotation="240" />
+
+    <!-- Exit area -->
+    <platform x="0" y="100" w="200" h="20" permanent="true" />
+    <door x="50" y="10" target="level8" locked="true" />
+
+    <!-- Some cables to help lower memory if too high -->
+    <cable x="500" y="0" len="200" />
+
+    <!-- A fruit to help if too low -->
+    <item x="100" y="600" type="fruit" frame="0" />
+</level>

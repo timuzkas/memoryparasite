@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygu Engine Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #35424a;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        nav {
+            background: #e8491d;
+            padding: 0.5rem;
+            position: sticky;
+            top: 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            margin: 0;
+        }
+        nav ul li {
+            margin: 0;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+        }
+        nav ul li a:hover {
+            background: #35424a;
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        section {
+            background: #fff;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #e8491d;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+        footer {
+            background: #35424a;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pygu Engine Examples</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#animator-with-sprites">Animator with Sprites</a></li>
+            <li><a href="#physics-with-collision">Physics with Collision</a></li>
+            <li><a href="#particle-effects">Particle Effects</a></li>
+            <li><a href="#post-processing">Post-Processing</a></li>
+            <li><a href="#asset-management">Asset Management</a></li>
+            <li><a href="#sound-effects">Sound Effects</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="animator-with-sprites">
+            <h2>Animator with Sprites</h2>
+            <p>This example demonstrates how to use the <code>Animator</code> class to animate a sprite.</p>
+            <pre><code>from engine.animation import Animator, AnimationCurve
+from engine.sprite import Sprite
+from engine.physics import Vec2
+import skia
+
+# Create an animator
+animator = Animator()
+
+# Create a sprite
+image = skia.Image.MakeFromEncoded(skia.Data.MakeFromFileName("path/to/image.png"))
+sprite = Sprite(image)
+sprite.position = Vec2(100, 100)
+
+# Create a named tween to animate the sprite's position
+animator.to(
+    "move_right",
+    start=100.0,
+    end=500.0,
+    duration=2.0,
+    curve=AnimationCurve.EASE_IN_OUT,
+    on_complete=lambda: print("Animation complete")
+)
+
+# Update the animator and sprite position
+def update(dt):
+    animator.update(dt)
+    tween = animator.get_tween("move_right")
+    if tween:
+        sprite.position.x = tween.value
+    sprite.render(canvas, sprite.position)
+</code></pre>
+        </section>
+
+        <section id="physics-with-collision">
+            <h2>Physics with Collision</h2>
+            <p>This example demonstrates how to use the <code>PhysicsWorld</code> and <code>CollisionWorld</code> classes to simulate physics and handle collisions.</p>
+            <pre><code>from engine.physics import PhysicsWorld, RigidBody, Vec2
+from engine.collision import CollisionWorld
+
+# Create a physics world with gravity
+physics_world = PhysicsWorld(gravity=Vec2(0, 9.8))
+
+# Create a collision world
+collision_world = CollisionWorld()
+
+# Create rigid bodies
+body1 = RigidBody(position=Vec2(100, 100), velocity=Vec2(0, 0), mass=1.0)
+body2 = RigidBody(position=Vec2(150, 150), velocity=Vec2(0, 0), mass=1.0)
+
+# Add bodies to the physics world
+physics_world.add_body(body1)
+physics_world.add_body(body2)
+
+# Add bodies to the collision world
+collision_world.add_circle(body1, radius=20)
+collision_world.add_circle(body2, radius=20)
+
+# Update the physics world and check for collisions
+def update(dt):
+    physics_world.update(dt)
+    collision_world.check_and_resolve()
+</code></pre>
+        </section>
+
+        <section id="particle-effects">
+            <h2>Particle Effects</h2>
+            <p>This example demonstrates how to use the <code>ParticleSystem</code> class to create particle effects.</p>
+            <pre><code>from engine.particles import ParticleSystem
+from engine.physics import Vec2
+import skia
+
+# Create a particle system
+particle_system = ParticleSystem()
+
+# Emit particles
+particle_system.emit(
+    pos=Vec2(100, 100),
+    count=50,
+    color=skia.ColorRED,
+    speed_range=(50, 200),
+    life_range=(0.3, 0.8),
+    size_range=(2, 6),
+    gravity=500.0
+)
+
+# Update and render the particle system
+def update(dt):
+    particle_system.update(dt)
+    particle_system.render(canvas)
+</code></pre>
+        </section>
+
+        <section id="post-processing">
+            <h2>Post-Processing</h2>
+            <p>This example demonstrates how to use the <code>PostProcessSystem</code> class to apply post-processing effects.</p>
+            <pre><code>from engine.effects import PostProcessSystem
+
+# Create a post-processing system
+post_process = PostProcessSystem(engine)
+
+# Trigger effects
+post_process.trigger_shake(5.0)
+post_process.trigger_glitch(1.0)
+
+# Set the active shader
+post_process.set_effect("glitch")
+
+# Update the post-processing system
+def update(dt):
+    post_process.update(dt)
+</code></pre>
+        </section>
+
+        <section id="asset-management">
+            <h2>Asset Management</h2>
+            <p>This example demonstrates how to use the <code>AssetManager</code> class to load and manage assets.</p>
+            <pre><code>from engine.assets import AssetManager
+
+# Get the asset manager instance
+asset_manager = AssetManager.get()
+
+# Load an image
+image = asset_manager.load_image("path/to/image.png", "my_image")
+
+# Load a spritesheet
+spritesheet = asset_manager.load_spritesheet("path/to/spritesheet.png", frame_w=32, frame_h=32, key="my_spritesheet")
+
+# Load a sound
+asset_manager.load_sound("path/to/sound.wav", "my_sound")
+
+# Play a sound
+asset_manager.play_sound("my_sound", volume=1.0)
+
+# Get a font
+font = asset_manager.get_font("Arial", 14)
+</code></pre>
+        </section>
+
+        <section id="sound-effects">
+            <h2>Sound Effects</h2>
+            <p>This example demonstrates how to use the <code>SoundManager</code> class to play sound effects.</p>
+            <pre><code>from engine.sound import SoundManager
+
+# Get the sound manager instance
+sound_manager = SoundManager.get()
+
+# Load a sound
+sound_manager.load("path/to/sound.wav", "my_sound")
+
+# Play a sound
+sound_manager.play("my_sound", volume=1.0)
+
+# Set the global volume
+sound_manager.set_global_volume(0.5)
+</code></pre>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Pygu Engine Examples</p>
+    </footer>
+</body>
+</html>

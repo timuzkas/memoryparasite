@@ -1,0 +1,15 @@
+<level name="Level 2" tutorial="shift into ghosts and kill them">
+    <!-- Floor -->
+    <platform x="0" y="670" w="1280" h="50" />
+
+    <!-- Ledges leading away -->
+    <platform x="300" y="550" w="150" h="20" />
+    <platform x="600" y="450" w="150" h="20" />
+    <platform x="900" y="350" w="150" h="20" />
+
+    <!-- High ledge reachable by memory loss -->
+    <platform x="600" y="250" w="150" h="20" memory_req="0.5" />
+
+    <!-- Door at the far end -->
+    <door x="200" y="75" target="level3" />
+</level>

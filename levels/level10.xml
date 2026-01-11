@@ -1,0 +1,13 @@
+<level name="Level 10" tutorial="kill him, fruits freeze its rage.">
+    <!-- Boss Arena -->
+    <platform x="0" y="670" w="1280" h="50" permanent="true" />
+    <platform x="100" y="500" w="200" h="20" />
+    <platform x="980" y="500" w="200" h="20" />
+    <platform x="440" y="350" w="400" h="20" />
+
+    <boss x="640" y="200" />
+
+    <!-- Items -->
+    <item x="50" y="600" type="fruit" frame="0" />
+    <item x="1200" y="600" type="fruit" frame="0" />
+</level>

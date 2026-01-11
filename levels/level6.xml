@@ -1,0 +1,35 @@
+<level
+    name="Level 6"
+    tutorial="less than 30% memory makes you light, more than 80% makes you heavy"
+>
+    <!-- Floor -->
+    <platform x="0" y="670" w="300" h="50" permanent="true" />
+
+    <!-- One Fruit to replenish -->
+    <item x="50" y="600" type="fruit" frame="0" />
+
+    <!-- Vertical shaft -->
+    <platform x="300" y="100" w="50" h="670" permanent="true" />
+
+    <!-- High Ledges: Impossible to reach without being LIGHT (<30%) -->
+    <platform x="50" y="500" w="100" h="20" />
+    <platform x="150" y="350" w="100" h="20" />
+    <platform x="50" y="200" w="100" h="20" />
+
+    <!-- Fragment 1 to reach top -->
+    <item x="80" y="150" type="fragment" rotation="0" />
+
+    <!-- New Platform that appears after Fragment 1 is collected -->
+    <!-- It makes reaching the second fragment and door easier -->
+    <platform x="400" y="300" w="150" h="20" fragment_req="1" />
+
+    <!-- Exit area at top right -->
+    <platform x="1000" y="150" w="280" h="20" permanent="true" />
+    <door x="1150" y="60" target="level7" locked="true" />
+
+    <item x="600" y="500" type="fragment" rotation="120" />
+    <item x="900" y="300" type="fragment" rotation="240" />
+
+    <!-- Cables to help lower memory -->
+    <cable x="500" y="0" len="300" />
+</level>

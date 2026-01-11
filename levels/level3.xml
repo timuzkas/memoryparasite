@@ -1,0 +1,28 @@
+<level name="Level 3" tutorial="collect the fruit ( save it for later )">
+    <!-- Floor (Entrance) -->
+    <platform x="0" y="670" w="300" h="50" />
+
+    <!-- Cave Walls -->
+    <platform x="0" y="0" w="50" h="670" />
+    <platform x="1230" y="0" w="50" h="720" />
+    <platform x="50" y="0" w="1180" h="50" />
+
+    <!-- Climbing Ledges (Left to Right to Left) -->
+    <platform x="150" y="550" w="150" h="25" />
+    <platform x="400" y="480" w="150" h="25" />
+    <platform x="650" y="410" w="150" h="25" />
+    <platform x="900" y="340" w="150" h="25" />
+    <platform x="650" y="270" w="150" h="25" />
+    <platform x="400" y="200" w="150" h="25" />
+    <platform x="150" y="130" w="150" h="25" />
+
+    <!-- Hidden platforms (only visible with low memory) -->
+    <platform x="400" y="320" w="100" h="20" memory_req="0.7" />
+    <platform x="150" y="250" w="100" h="20" memory_req="0.4" />
+
+    <!-- The Fruit (Essence) at the top left ledge -->
+    <item x="180" y="70" frame="0" />
+
+    <!-- Door back to Level 4 at the bottom right -->
+    <door x="1150" y="580" target="level4" />
+</level>
