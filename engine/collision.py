@@ -52,28 +52,16 @@ def circle_vs_rect(
         return CollisionInfo(hit=False)
 
     if dist == 0:
-        # Circle center is inside the rectangle. Push out to the nearest edge.
-        # Check distances to edges
-        # closest_x is circle_pos.x, closest_y is circle_pos.y
         dl = circle_pos.x - rect_x
         dr = (rect_x + rect_w) - circle_pos.x
         dt = circle_pos.y - rect_y
         db = (rect_y + rect_h) - circle_pos.y
-        
-        # Find minimum penetration
+
         min_p = min(dl, dr, dt, db)
-        
+
         if min_p == dl:
             normal = Vec2(-1, 0)
-            depth = radius + dl # Ensure we push out fully + radius? 
-            # If center is inside, depth is distance to surface? No.
-            # Depth in Resolve is overlap amount.
-            # If we want to push center to surface + radius:
-            # We want to push by `radius + min_p`? 
-            # If min_p is 10 (10 units inside), and radius is 10.
-            # If we push by 10, center is ON surface. Still intersecting?
-            # Yes, if center is on surface, distance is 0.
-            # We need to push so distance is Radius.
+            depth = radius + dl  # Ensure we push out fully + radius?
             depth = radius + min_p
         elif min_p == dr:
             normal = Vec2(1, 0)
@@ -84,7 +72,7 @@ def circle_vs_rect(
         else:
             normal = Vec2(0, 1)
             depth = radius + db
-            
+
         return CollisionInfo(hit=True, normal=normal, depth=depth, point=closest)
 
     normal = diff.normalized()
@@ -139,21 +127,18 @@ def resolve_rect_vs_static(
     pad_x = min(padding, width * 0.4)
     pad_y = min(padding, height * 0.4)
 
-    # Pass 1: Vertical Resolution (Y)
     for r in static_rects:
         rx, ry, rw, rh = (r.x, r.y, r.w, r.h) if hasattr(r, "x") else r
         px = body.position.x - width / 2
         py = body.position.y - height / 2
 
-        # Horizontal overlap check with dynamic padding
         if px + pad_x < rx + rw and px + width - pad_x > rx:
             # Check vertical overlap
             if py < ry + rh and py + height > ry:
-                # Calculate penetration depths
                 overlap_top = (py + height) - ry
                 overlap_bottom = (ry + rh) - py
 
-                if overlap_top < overlap_bottom:  # Closer to top of platform
+                if overlap_top < overlap_bottom:
                     body.position.y = ry - height / 2 - epsilon
                     if body.velocity.y > 0:
                         body.velocity.y = 0

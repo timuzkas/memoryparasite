@@ -20,7 +20,7 @@ class CoreEngine:
         self.show_fps = True
         self.debug_mode = False
         self.components: list[Component] = []
-        self.last_heartbeat = time.time()
+        self.last_heartbeat = time.perf_counter()
         self.frame_count = 0
         self.fps = 0.0
         self.fps_update_time = 0.0
@@ -211,16 +211,16 @@ class CoreEngine:
             self.components.append(comp)
 
     def run_heartbeat(self):
-        now = time.time()
+        now = time.perf_counter()
         if now - self.last_heartbeat >= 5.0:
             tlog.info(f"Heartbeat: FPS: {int(self.fps)} | Components: {len(self.components)}")
             self.last_heartbeat = now
 
     def run(self):
         tlog.info("Entering main loop")
-        self.last_time = time.time()
+        self.last_time = time.perf_counter()
         while not glfw.window_should_close(self.window):
-            now = time.time()
+            now = time.perf_counter()
             dt = now - self.last_time
             self.last_time = now
             self.fps = 1.0 / dt if dt > 0 else 60

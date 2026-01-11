@@ -9,7 +9,7 @@
     <!-- At 100% mem, freq = 5 * 2.2 = 11.0 (very fast) -->
     <!-- At 40% mem, freq = 5 * 1.0 = 5.0 (manageable) -->
     <platform x="250" y="550" w="120" h="20" blink_freq="5.0" />
-    <platform x="450" y="450" w="120" h="20" blink_freq="5.0" />
+    <platform x="450" y="450" w="120" h="20" /> <!-- Stable resting platform -->
     <platform x="650" y="350" w="120" h="20" blink_freq="5.0" />
 
     <!-- Fragment 1 -->
@@ -17,14 +17,14 @@
 
     <!-- Higher path -->
     <platform x="850" y="250" w="120" h="20" blink_freq="6.0" />
-    <platform x="650" y="150" w="120" h="20" blink_freq="6.0" />
+    <platform x="650" y="150" w="120" h="20" /> <!-- Stable resting platform -->
 
     <!-- Fragment 2 -->
     <item x="680" y="100" type="fragment" rotation="120" />
 
     <!-- Final stretch -->
     <platform x="450" y="150" w="120" h="20" blink_freq="7.0" />
-    <platform x="250" y="150" w="120" h="20" blink_freq="7.0" />
+    <platform x="250" y="150" w="120" h="20" /> <!-- Stable resting platform -->
 
     <!-- Fragment 3 -->
     <item x="280" y="100" type="fragment" rotation="240" />
