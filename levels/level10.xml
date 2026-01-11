@@ -1,4 +1,4 @@
-<level name="Level 10" tutorial="kill him, fruits freeze its rage.">
+<level name="Level 10" tutorial="dash to kill him, fruits freeze his rage.">
     <!-- Boss Arena -->
     <platform x="0" y="670" w="1280" h="50" permanent="true" />
     <platform x="100" y="500" w="200" h="20" />

@@ -1,15 +1,12 @@
 import os
 import time
-
 import glfw
 import moderngl
 import numpy as np
 import skia
-
 from engine.component import Component, Event, EventType
 from engine.shaders import CRT_FRAG, DEFAULT_FRAG, DEFAULT_VERT, GLITCH_FRAG, VHS_FRAG, MATRIX_FRAG
 from lib import tlog
-
 
 class CoreEngine:
     def __init__(self, width=1280, height=720, title="T3 Engine"):
@@ -25,7 +22,6 @@ class CoreEngine:
         self.fps = 0.0
         self.fps_update_time = 0.0
 
-        # Post Processing State
         self.canvas_offset = (0.0, 0.0)
         self.post_process_time = 0.0
         self.post_process_intensity = 0.0
@@ -36,47 +32,26 @@ class CoreEngine:
         self.ctx = None
         self.surface = None
 
-        with tlog.Span("engine_startup"):
-            tlog.info(f"Initializing T3 Engine | Target: {width}x{height}")
+        if not glfw.init(): raise RuntimeError("GLFW init failed")
 
-            if not glfw.init():
-                tlog.err("Critical: GLFW initialization failed")
-                raise RuntimeError("GLFW init failed")
+        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
-            glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-            glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-            glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+        self.window = glfw.create_window(width, height, title, None, None)
+        if not self.window: glfw.terminate(); raise RuntimeError("Window creation failed")
 
-            self.window = glfw.create_window(width, height, title, None, None)
-            if not self.window:
-                tlog.err("Critical: Window creation failed")
-                glfw.terminate()
-                raise RuntimeError("Window creation failed")
+        glfw.make_context_current(self.window)
+        glfw.swap_interval(1)
+        self._setup_callbacks()
 
-            glfw.make_context_current(self.window)
-            glfw.swap_interval(1)
-            self._setup_callbacks()
-
-            self.ctx = moderngl.create_context()
-            tlog.info(
-                f"GPU: {self.ctx.info['GL_RENDERER']} | OpenGL: {self.ctx.info['GL_VERSION']}"
-            )
-
-            with tlog.Span("graphics_pipeline_setup"):
-                self._init_skia_cpu(width, height)
-                self._init_blit_pipeline()
-                self._init_fonts()
-
-            tlog.info("Engine Startup Complete")
+        self.ctx = moderngl.create_context()
+        self._init_skia_cpu(width, height)
+        self._init_blit_pipeline()
+        self._init_fonts()
 
     def _init_fonts(self):
-        candidates = ["Inter", "Roboto", "DejaVu Sans", "Arial", "sans-serif"]
-        typeface = None
-        for name in candidates:
-            typeface = skia.Typeface.MakeFromName(name, skia.FontStyle.Normal())
-            if typeface:
-                tlog.info(f"Font loaded: {name}")
-                break
+        typeface = skia.Typeface.MakeFromName("Inter", skia.FontStyle.Normal())
         self.fps_font = skia.Font(typeface or skia.Typeface.MakeDefault(), 14)
 
     def _setup_callbacks(self):
@@ -86,9 +61,7 @@ class CoreEngine:
         glfw.set_framebuffer_size_callback(self.window, self._on_resize)
 
     def _on_resize(self, window, width, height):
-        if width == 0 or height == 0:
-            return
-        tlog.info(f"Event: Window Resize -> {width}x{height}")
+        if width == 0 or height == 0: return
         self.width, self.height = width, height
         self.ctx.viewport = (0, 0, width, height)
         self._init_skia_cpu(width, height)
@@ -110,19 +83,10 @@ class CoreEngine:
         self.vbo = self.ctx.buffer(flip_verts)
         self.std_vbo = self.ctx.buffer(std_verts)
 
-        shader_configs = {
-            "default": DEFAULT_FRAG,
-            "glitch": GLITCH_FRAG,
-            "crt": CRT_FRAG,
-            "vhs": VHS_FRAG,
-            "matrix": MATRIX_FRAG,
-        }
-
+        shader_configs = {"default": DEFAULT_FRAG, "glitch": GLITCH_FRAG, "crt": CRT_FRAG, "vhs": VHS_FRAG, "matrix": MATRIX_FRAG}
         for name, frag in shader_configs.items():
-            try:
-                self.shaders[name] = self.ctx.program(vertex_shader=DEFAULT_VERT, fragment_shader=frag)
-            except moderngl.Error as e:
-                tlog.err(f"Shader '{name}' compilation failed: {e}")
+            try: self.shaders[name] = self.ctx.program(vertex_shader=DEFAULT_VERT, fragment_shader=frag)
+            except moderngl.Error as e: tlog.err(f"Shader '{name}' compilation failed: {e}")
 
         self.ui_texture = self.ctx.texture((self.width, self.height), 4)
         self.temp_texture = self.ctx.texture((self.width, self.height), 4)
@@ -136,24 +100,14 @@ class CoreEngine:
             self.blit_vaos[name] = self.ctx.vertex_array(prog, [(self.vbo, "2f 2f", "in_pos", "in_uv")])
             self.screen_vaos[name] = self.ctx.vertex_array(prog, [(self.std_vbo, "2f 2f", "in_pos", "in_uv")])
 
-        tlog.info(f"Compiled {len(self.shaders)} shaders")
+    @property
+    def active_shader_name(self) -> str: return self.active_shader
 
     @property
-    def active_shader_name(self) -> str:
-        return self.active_shader
-
-    @property
-    def blit_vao(self):
-        return self.blit_vaos.get(self.active_shader)
-
-    @property
-    def post_process_uniforms(self) -> dict:
-        return {"time": self.post_process_time, "intensity": self.post_process_intensity}
+    def post_process_uniforms(self) -> dict: return {"time": self.post_process_time, "intensity": self.post_process_intensity}
 
     def set_shader(self, name):
-        if name in self.shaders:
-            self.active_shader = name
-            tlog.info(f"Active shader set to: {name}")
+        if name in self.shaders: self.active_shader = name
 
     def set_post_process(self, intensity: float):
         self.post_process_intensity = max(0.0, min(1.0, intensity))
@@ -162,9 +116,7 @@ class CoreEngine:
         self.canvas_offset = (x, y)
 
     def _on_key(self, w, k, s, a, m):
-        if k == glfw.KEY_F1 and a == glfw.PRESS:
-            self.debug_mode = not self.debug_mode
-            tlog.info(f"Debug mode: {self.debug_mode}")
+        if k == glfw.KEY_F1 and a == glfw.PRESS: self.debug_mode = not self.debug_mode
         if a == glfw.PRESS:
             if k == glfw.KEY_F2: self.set_shader("default")
             elif k == glfw.KEY_F3: self.set_shader("glitch")
@@ -193,31 +145,25 @@ class CoreEngine:
         self.ui_texture.write(image.tobytes())
 
     def _render_fps(self, canvas: skia.Canvas):
-        if not self.show_fps:
-            return
-        paint = skia.Paint(AntiAlias=True, Color=skia.ColorGREEN)
-        canvas.drawString(f"FPS: {int(self.fps)}", 10, 20, self.fps_font, paint)
+        if not self.show_fps: return
+        canvas.drawString(f"FPS: {int(self.fps)}", 10, 20, self.fps_font, skia.Paint(AntiAlias=True, Color=skia.ColorGREEN))
 
     def _update_shader_uniforms(self, dt: float):
         self.post_process_time += dt
-        for name, prog in self.shaders.items():
+        for prog in self.shaders.values():
             if "time" in prog: prog["time"].value = self.post_process_time
             if "intensity" in prog: prog["intensity"].value = self.post_process_intensity
             if "resolution" in prog: prog["resolution"].value = (self.width, self.height)
 
     def add_component(self, comp: Component):
-        with tlog.Span(f"mounting_{comp.name}"):
-            comp.on_init(self.ctx, self.surface.getCanvas())
-            self.components.append(comp)
+        comp.on_init(self.ctx, self.surface.getCanvas())
+        self.components.append(comp)
 
     def run_heartbeat(self):
         now = time.perf_counter()
-        if now - self.last_heartbeat >= 5.0:
-            tlog.info(f"Heartbeat: FPS: {int(self.fps)} | Components: {len(self.components)}")
-            self.last_heartbeat = now
+        if now - self.last_heartbeat >= 5.0: self.last_heartbeat = now
 
     def run(self):
-        tlog.info("Entering main loop")
         self.last_time = time.perf_counter()
         while not glfw.window_should_close(self.window):
             now = time.perf_counter()
@@ -240,27 +186,11 @@ class CoreEngine:
             self.ctx.enable(moderngl.BLEND)
             self.ctx.blend_func = (moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA)
 
-            # Pass 1: UI -> VHS -> Temp
-            self.fbo.use()
-            self.ctx.clear(0, 0, 0, 0)
-            self.ui_texture.use(0)
-            self.blit_vaos["vhs"].render(moderngl.TRIANGLE_STRIP)
+            # Blit passes (VHS -> Matrix -> Screen)
+            self.fbo.use(); self.ctx.clear(0, 0, 0, 0); self.ui_texture.use(0); self.blit_vaos["vhs"].render(moderngl.TRIANGLE_STRIP)
+            self.fbo2.use(); self.ctx.clear(0, 0, 0, 0); self.temp_texture.use(0); self.screen_vaos["matrix"].render(moderngl.TRIANGLE_STRIP)
+            self.ctx.screen.use(); self.ctx.clear(0, 0, 0, 1); self.temp_texture2.use(0); self.screen_vaos["crt"].render(moderngl.TRIANGLE_STRIP)
 
-            # Pass 2: Temp -> Matrix -> Temp2
-            self.fbo2.use()
-            self.ctx.clear(0, 0, 0, 0)
-            self.temp_texture.use(0)
-            self.screen_vaos["matrix"].render(moderngl.TRIANGLE_STRIP)
+            glfw.swap_buffers(self.window); glfw.poll_events(); self.run_heartbeat()
 
-            # Pass 3: Temp2 -> CRT -> Screen
-            self.ctx.screen.use()
-            self.ctx.clear(0, 0, 0, 1)
-            self.temp_texture2.use(0)
-            self.screen_vaos["crt"].render(moderngl.TRIANGLE_STRIP)
-
-            glfw.swap_buffers(self.window)
-            glfw.poll_events()
-            self.run_heartbeat()
-
-        tlog.info("Shutdown")
         glfw.terminate()

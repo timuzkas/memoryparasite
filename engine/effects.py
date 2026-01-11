@@ -6,27 +6,19 @@ class PostProcessSystem:
         self.shake = 0.0
         self.glitch = 0.0
         self.time = 0.0
-        
-        # Shader uniforms are handled in engine render loop if exposed
-        # We will assume engine exposes a way to set uniforms
 
     def update(self, dt: float):
         self.time += dt
-        
-        # Decay effects
         self.shake = max(0.0, self.shake - dt * 10.0)
         self.glitch = max(0.0, self.glitch - dt * 2.0)
         
-        # Apply to engine
         if hasattr(self.engine, 'post_process_uniforms'):
             self.engine.post_process_uniforms['time'] = self.time
             self.engine.post_process_uniforms['intensity'] = self.glitch
         
         if hasattr(self.engine, 'canvas_offset'):
             if self.shake > 0:
-                sx = random.uniform(-self.shake, self.shake)
-                sy = random.uniform(-self.shake, self.shake)
-                self.engine.canvas_offset = (sx, sy)
+                self.engine.canvas_offset = (random.uniform(-self.shake, self.shake), random.uniform(-self.shake, self.shake))
             else:
                 self.engine.canvas_offset = (0, 0)
 

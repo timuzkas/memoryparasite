@@ -17,12 +17,12 @@ added_files = [
 binaries = []
 if sys.platform.startswith('linux'):
     # Try to locate glfw libs in the environment
-    # Note: Using absolute paths from a specific user's venv is brittle for a shared spec,
-    # but I'll keep the logic if it's needed for this specific build environment.
-    # A cleaner way is usually letting PyInstaller find it or providing relative paths.
-    pass
+    binaries += [
+        ('venv/lib/python3.13/site-packages/glfw/wayland/libglfw.so', '.'),
+        ('venv/lib/python3.13/site-packages/glfw/x11/libglfw.so', '.')
+    ]
 elif sys.platform == 'win32':
-    pass
+    binaries += [('glwf3.dll', '.')]
 elif sys.platform == 'darwin':
     pass
 

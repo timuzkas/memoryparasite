@@ -465,14 +465,22 @@ class MemoryParasiteGame(Component):
             canvas.drawLine(0, self.rising_purge_y, self.w, self.rising_purge_y, skia.Paint(Color=skia.Color(255, 255, 255, 150), StrokeWidth=2))
             for _ in range(5): canvas.drawLine(0, self.rising_purge_y + random.uniform(0, 50), self.w, self.rising_purge_y + random.uniform(0, 50), skia.Paint(Color=skia.Color(255, 0, 255, 50), StrokeWidth=1))
         
-        sp = skia.Paint(Color=skia.Color(255, 200, 0), MaskFilter=skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 4))
+        if not hasattr(self, '_spark_p'):
+            self._spark_p = skia.Paint(Color=skia.Color(255, 200, 0), MaskFilter=skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 4))
+            self._spark_inner_p = skia.Paint(Color=skia.ColorWHITE)
+            self._sw_glow_p = skia.Paint(Style=skia.Paint.kStroke_Style, StrokeWidth=15, AntiAlias=True, MaskFilter=skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 10))
+            self._sw_sharp_p = skia.Paint(Style=skia.Paint.kStroke_Style, StrokeWidth=2, AntiAlias=True)
+
         for s in self.sparks:
-            sp.setColor(skia.Color(255, 50, 0) if random.random() < 0.3 else skia.Color(255, 200, 0))
-            canvas.drawCircle(s["pos"].x, s["pos"].y, 6, sp); canvas.drawCircle(s["pos"].x, s["pos"].y, 3, skia.Paint(Color=skia.ColorWHITE))
+            self._spark_p.setColor(skia.Color(255, 50, 0) if random.random() < 0.3 else skia.Color(255, 200, 0))
+            canvas.drawCircle(s["pos"].x, s["pos"].y, 6, self._spark_p); canvas.drawCircle(s["pos"].x, s["pos"].y, 3, self._spark_inner_p)
+        
         for sw in self.shockwaves:
             alpha = int(255 * (1.0 - sw["r"] / sw["max_r"]))
-            canvas.drawCircle(sw["pos"].x, sw["pos"].y, sw["r"], skia.Paint(Style=skia.Paint.kStroke_Style, StrokeWidth=15, Color=skia.Color(255, 200, 100, alpha), AntiAlias=True, MaskFilter=skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 10)))
-            canvas.drawCircle(sw["pos"].x, sw["pos"].y, sw["r"], skia.Paint(Style=skia.Paint.kStroke_Style, StrokeWidth=2, Color=skia.Color(255, 200, 100, alpha), AntiAlias=True))
+            self._sw_glow_p.setColor(skia.Color(255, 200, 100, alpha))
+            self._sw_sharp_p.setColor(skia.Color(255, 200, 100, alpha))
+            canvas.drawCircle(sw["pos"].x, sw["pos"].y, sw["r"], self._sw_glow_p)
+            canvas.drawCircle(sw["pos"].x, sw["pos"].y, sw["r"], self._sw_sharp_p)
 
         self.ui.render(canvas, self.player.memory, self.player.cfg.max_mem, self.player.fruits)
         if self.corruption: self.corruption.render_vignette(canvas, self.w, self.h); self.corruption.render_cracks(canvas, self.w, self.h); self.corruption.render_crash(canvas, self.w, self.h); self.corruption.render_impact_shatter(canvas); self.corruption.render_shatter(canvas, self.w, self.h)
